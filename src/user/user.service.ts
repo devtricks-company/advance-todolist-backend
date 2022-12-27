@@ -20,7 +20,10 @@ export class UserService implements IUserService {
     }
 
     const hashUserPassword = await hashPassword(params.password);
-    return this.userModel.create({ ...params, password: hashUserPassword });
+    return await this.userModel.create({
+      ...params,
+      password: hashUserPassword,
+    });
   }
   getAllUser(): Promise<User[]> {
     return this.userModel.find({}).exec();
