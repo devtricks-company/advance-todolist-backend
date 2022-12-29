@@ -58,7 +58,7 @@ export class ProjectController {
   ) {
     return this.projectService.addParticipants(
       id,
-      participants.participatns,
+      participants.participants,
       owner,
     );
   }

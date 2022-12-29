@@ -23,13 +23,21 @@ export class ProjectService implements IProjectService {
           participant: { $in: [new mongoose.Types.ObjectId(user._id)] },
         },
       },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'participant',
+          foreignField: '_id',
+          as: 'participant',
+        },
+      },
     ]).exec();
 
     return projects;
   }
   async addParticipants(
     id: string,
-    participant: UserType,
+    participant: UserType[],
     owner: UserType,
   ): Promise<Project> {
     const project = await this.getProjectById(id);
@@ -40,7 +48,7 @@ export class ProjectService implements IProjectService {
       );
     }
 
-    const participants = [...project.participant, participant];
+    const participants = [...project.participant, ...participant];
     return this.ProjectModel.findByIdAndUpdate(
       id,
       { ...project, participant: participants },

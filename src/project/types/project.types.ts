@@ -12,7 +12,7 @@ export interface IProjectService {
   getProjectById(id: string): Promise<Project>;
   addParticipants(
     id: string,
-    participant: UserType,
+    participant: UserType[],
     owner: UserType,
   ): Promise<Project>;
   getProjectByUser(user: UserType): Promise<Project[]>;
