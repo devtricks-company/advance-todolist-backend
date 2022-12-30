@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   Inject,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IUserService } from './types/Usre.type';
-import { User } from './entities/user.entity';
+import { IUserService, UserType } from './types/Usre.type';
+import { User, UserDocument } from './entities/user.entity';
+import { AuthenticatedGuard } from 'src/auth/Guard/AuthenticatedGuard';
 
 @Controller('user')
 export class UserController {
@@ -21,13 +23,21 @@ export class UserController {
   ) {}
 
   @Get()
-  getAllUser(): Promise<User[]> {
+  getAllUser(): Promise<UserDocument[]> {
     return this.userService.getAllUser();
   }
 
   @Get(':id')
   getAUser(@Param('id') id: string): Promise<User | undefined> {
     return this.userService.getAUser(id);
+  }
+
+  @Get('/project/:id')
+  @UseGuards(AuthenticatedGuard)
+  async getUsersForProjectParticipants(
+    @Param('id') projectId: string,
+  ): Promise<UserDocument[] | undefined> {
+    return this.userService.getUsersListForParticipant(projectId);
   }
 
   @Post()

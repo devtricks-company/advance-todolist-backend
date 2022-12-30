@@ -15,5 +15,11 @@ import { ProjectService } from './project.service';
       useClass: ProjectService,
     },
   ],
+  exports: [
+    {
+      provide: 'ProjectService',
+      useClass: ProjectService,
+    },
+  ],
 })
 export class ProjectModule {}

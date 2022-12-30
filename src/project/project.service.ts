@@ -49,14 +49,16 @@ export class ProjectService implements IProjectService {
     }
 
     const participants = [...project.participant, ...participant];
-    return this.ProjectModel.findByIdAndUpdate(
+    await this.ProjectModel.findByIdAndUpdate(
       id,
       { ...project, participant: participants },
       {
         new: true,
         runValidators: true,
       },
-    );
+    ).exec();
+
+    return await this.getProjectById(id);
   }
   async getProjectById(id: string): Promise<Project> {
     const result = await this.ProjectModel.aggregate([
@@ -77,6 +79,14 @@ export class ProjectService implements IProjectService {
         $unwind: {
           path: '$owner',
           preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'participant',
+          foreignField: '_id',
+          as: 'participant',
         },
       },
     ]).exec();

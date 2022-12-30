@@ -1,12 +1,15 @@
-import { User } from '../entities/user.entity';
+import { User, UserDocument } from '../entities/user.entity';
 
 export interface IUserService {
   createUser(params: UserParams): Promise<User | undefined>;
-  getAllUser(): Promise<User[]>;
+  getAllUser(): Promise<UserDocument[]>;
   getAUser(id: string): Promise<User | undefined>;
   getAUserByEmail(email: string): Promise<User | undefined>;
   updateUser(id: string, params: UserParams): Promise<User | undefined>;
   deleteUser(id: string): Promise<boolean>;
+  getUsersListForParticipant(
+    projectId: string,
+  ): Promise<UserDocument[] | undefined>;
 }
 
 export type UserParams = {

@@ -1,17 +1,36 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './entities/user.entity';
-import { UserParams, IUserService } from './types/Usre.type';
+import { UserParams, IUserService, UserType } from './types/Usre.type';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { hashPassword } from 'src/helper/passwordHelper';
+import { IProjectService } from 'src/project/types/project.types';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @Inject('ProjectService') private readonly projectService: IProjectService,
   ) {}
+
+  async getUsersListForParticipant(
+    projectId: string,
+  ): Promise<UserDocument[] | undefined> {
+    const project = await this.projectService.getProjectById(projectId);
+    // return this.getAllUser().filter((user) => {
+    //   return !project.participant.includes(user._id);
+    // });
+
+    const users = (await this.getAllUser()).filter((user: UserDocument) => {
+      return !project.participant.find(
+        (parti) => parti._id.toString() === user._id.toString(),
+      );
+    });
+
+    return users;
+  }
 
   async createUser(params: UserParams): Promise<User> {
     const user = await this.getAUserByEmail(params.email);
@@ -25,7 +44,7 @@ export class UserService implements IUserService {
       password: hashUserPassword,
     });
   }
-  getAllUser(): Promise<User[]> {
+  getAllUser(): Promise<UserDocument[]> {
     return this.userModel.find({}).exec();
   }
   getAUser(id: string): Promise<User> {
