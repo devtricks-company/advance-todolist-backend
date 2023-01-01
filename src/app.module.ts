@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectModule } from './project/project.module';
+import { TasksModule } from './tasks/tasks.module';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as MongodbStoreConnect from 'connect-mongodb-session';
@@ -18,6 +19,7 @@ const MongodbStore = MongodbStoreConnect(session);
     UserModule,
     AuthModule,
     ProjectModule,
+    TasksModule,
   ],
   controllers: [],
   providers: [],
